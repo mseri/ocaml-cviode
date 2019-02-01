@@ -16,6 +16,7 @@ let plot_sol fname t sol1 sol2 =
   let open Plot in
   set_foreground_color h 0 0 0;
   set_background_color h 255 255 255;
+  set_title h fname;
   plot ~h ~spec:[ RGB (0,0,255); LineStyle 1 ] t (Mat.col sol1 0);
   plot ~h ~spec:[ RGB (0,255,0); LineStyle 1 ] t (Mat.col sol2 0);
   (* XXX: I could not figure out how to make the legend black instead of red *)
