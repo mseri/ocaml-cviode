@@ -13,12 +13,14 @@ let dt = 0.1
 let plot_sol fname t sol1 sol2 =
   let open Owl in
   let h = Plot.create fname in
-  Plot.set_foreground_color h 0 0 0;
-  Plot.set_background_color h 255 255 255;
-  Plot.plot ~h ~spec:[ RGB (0,0,255); LineStyle 1 ] t (Mat.col sol1 0);
-  Plot.plot ~h ~spec:[ RGB (0,255,0); LineStyle 1 ] t (Mat.col sol2 0);
-  Plot.(legend_on h ~position:NorthEast [|"Contact 1st"; "Contact 2nd";|]);
-  Plot.output h
+  let open Plot in
+  set_foreground_color h 0 0 0;
+  set_background_color h 255 255 255;
+  plot ~h ~spec:[ RGB (0,0,255); LineStyle 1 ] t (Mat.col sol1 0);
+  plot ~h ~spec:[ RGB (0,255,0); LineStyle 1 ] t (Mat.col sol2 0);
+  (* XXX: I could not figure out how to make the legend black instead of red *)
+  legend_on h ~position:NorthEast [|"Contact 1st"; "Contact 2nd";|];
+  output h
 
 let () =
   let y0 = Owl.Mat.of_array [|-0.25; 0.75|] 1 2 in
