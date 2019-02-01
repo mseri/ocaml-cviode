@@ -12,3 +12,11 @@ Running the integrators on the damped oscillator with and without forcing (see [
 ![no forcing, critical damping](img/damped.png)
 
 ![no forcing, critical damping](img/forced.png)
+
+
+## TODO
+
+- [ ] Add mli with documentation
+- [ ] Add implementation with support for $g_2(z)$ as per description
+- [ ] Figure out how to test
+
