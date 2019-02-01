@@ -4,7 +4,7 @@ This is a collection of geometric solvers for initial value problems derived fro
 The provided solvers concern Lagrangians of the form
 ```latex
 $$                                         
-L(x, \dot{x}, z, t) = \frac12|\dot{x}|^2 + g_1(x)g_2(z) + h(z) + f(t)\dot{x}
+L(x, \dot{x}, z, t) = \frac12|\dot{x}|^2 + g_1(x)g_2(z) + h(z) + f(t)x
 $$
 ```
 For further information refer to _Vermeeren, Bravetti, Seri: Contact Variational Integrators (2019)_.
