@@ -55,7 +55,7 @@ let contact2_damped ~a ~f y0 (t0, t1) dt =
     let xsnew = Owl.Mat.(xs + mul_scalar ps (dt*.c0) + mul_scalar fxs (dt*.c1)) in
     let fxsnew = f xsnew t in
     sol.${[[idx]; [0; elts/2-1]]}<- xsnew;
-    sol.${[[idx]; [elts/2; elts-1]]}<- Owl.Mat.(mul_scalar ps c0 + mul_scalar (fxs + fxsnew) c1 |> fun m -> mul_scalar m (1.0/.c0plus));
+    sol.${[[idx]; [elts/2; elts-1]]}<- Owl.Mat.(mul_scalar ps (c0/.c0plus) + mul_scalar (fxs + fxsnew) (c1/.c0plus));
   done;
   sol
 
