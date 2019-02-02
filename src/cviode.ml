@@ -3,6 +3,10 @@
 type timespan = float * float
 (** Representation of a time span. *)
 
+(** Private function, allow to get the slices indexes for xs and ys *)
+let slices idx elts =
+  [[idx]; [0; elts/2-1]], [[idx]; [elts/2; elts-1]]
+
 let check _a _f y0 =
   (* TODO: check shapes of a and f, make sure they are all compatible *)
   let _, elts = Owl.Mat.shape y0 in
@@ -22,16 +26,17 @@ let contact1_damped ~a ~f y0 (t0, t1) dt =
   let sol = Owl.Mat.empty steps elts in
   sol.${[[0]]}<- y0;
   for idx = 1 to steps-1 do
-    let xs = sol.${[[idx-1]; [0; elts/2-1]]} in
-    let ps = sol.${[[idx-1]; [elts/2; elts-1]]} in
+    let xi, pi = slices (idx-1) elts in
+    let xi', pi' = slices idx elts in
+    let xs, ps = sol.${xi}, sol.${pi} in
     let t = t0 +. dt*.(float_of_int idx) in
     let c0 = 1.0 -. dt*.(a t) in
     let c1 = 0.5 *. dt in
     let fxs = f xs t in
-    let xsnew = Owl.Mat.(xs + ps *$ (dt*.c0) + fxs *$ (dt*.c1)) in
-    let fxsnew = f xsnew t in
-    sol.${[[idx]; [0; elts/2-1]]}<- xsnew;
-    sol.${[[idx]; [elts/2; elts-1]]}<- Owl.Mat.(ps *$ c0 + (fxs + fxsnew) *$ c1);
+    let xs' = Owl.Mat.(xs + ps *$ (dt*.c0) + fxs *$ (dt*.c1)) in
+    let fxs' = f xs' t in
+    sol.${xi'}<- xs';
+    sol.${pi'}<- Owl.Mat.(ps *$ c0 + (fxs + fxs') *$ c1);
   done;
   sol
 
@@ -43,18 +48,19 @@ let contact2_damped ~a ~f y0 (t0, t1) dt =
   let sol = Owl.Mat.empty steps elts in
   sol.${[[0]]}<- y0;
   for idx = 1 to steps-1 do
-    let xs = sol.${[[idx-1]; [0; elts/2-1]]} in
-    let ps = sol.${[[idx-1]; [elts/2; elts-1]]} in
+    let xi, pi = slices (idx-1) elts in
+    let xi', pi' = slices idx elts in
+    let xs, ps = sol.${xi}, sol.${pi} in
     let t = t0 +. dt *. (float_of_int idx) in
     let at = a t in
     let fxs = f xs t in
     let c0m = 1.0 -. 0.5*.dt*.at in
     let c0p = 1.0 +. 0.5*.dt*.at in
     let c1 = 0.5*.dt in
-    let xsnew = Owl.Mat.(xs + ps *$ (dt*.c0m) + fxs *$ (dt*.c1)) in
-    let fxsnew = f xsnew t in
-    sol.${[[idx]; [0; elts/2-1]]}<- xsnew;
-    sol.${[[idx]; [elts/2; elts-1]]}<- Owl.Mat.(ps *$ (c0m/.c0p) + (fxs + fxsnew) *$ (c1/.c0p));
+    let xs' = Owl.Mat.(xs + ps *$ (dt*.c0m) + fxs *$ (dt*.c1)) in
+    let fxs' = f xs' t in
+    sol.${xi'}<- xs';
+    sol.${pi'}<- Owl.Mat.(ps *$ (c0m/.c0p) + (fxs + fxs') *$ (c1/.c0p));
   done;
   sol
 
