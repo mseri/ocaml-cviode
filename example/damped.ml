@@ -1,11 +1,10 @@
-let damped_noforcing xs _ =
-  Owl.Mat.mul_scalar xs (-1.0)
+let damped_noforcing xs _ = Owl.Mat.(xs *$ (-1.0))
 
 let damped_forcing beta omega xs t = 
-  Owl.Mat.(add_scalar
-             (damped_noforcing xs 0.0)
-             (beta *. Owl.Maths.sin(omega *. t))
-          )
+  Owl.Mat.(
+    (damped_noforcing xs 0.0) +$
+    (beta *. Owl.Maths.sin(omega *. t))
+  )
 
 let a _ = 1.0 
 let dt = 0.1

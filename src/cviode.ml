@@ -24,15 +24,14 @@ let contact1_damped ~a ~f y0 (t0, t1) dt =
   for idx = 1 to steps-1 do
     let xs = sol.${[[idx-1]; [0; elts/2-1]]} in
     let ps = sol.${[[idx-1]; [elts/2; elts-1]]} in
-    let t = t0 +. dt *. (float_of_int idx) in
-    let a = a t in
-    let c0 = 1.0 -. dt*.a in
-    let c1 = 0.5*.dt in
+    let t = t0 +. dt*.(float_of_int idx) in
+    let c0 = 1.0 -. dt*.(a t) in
+    let c1 = 0.5 *. dt in
     let fxs = f xs t in
-    let xsnew = Owl.Mat.(xs + mul_scalar ps (dt*.c0) + mul_scalar fxs (dt*.c1)) in
+    let xsnew = Owl.Mat.(xs + ps *$ (dt*.c0) + fxs *$ (dt*.c1)) in
     let fxsnew = f xsnew t in
     sol.${[[idx]; [0; elts/2-1]]}<- xsnew;
-    sol.${[[idx]; [elts/2; elts-1]]}<- Owl.Mat.(mul_scalar ps c0 + mul_scalar (fxs + fxsnew) c1);
+    sol.${[[idx]; [elts/2; elts-1]]}<- Owl.Mat.(ps *$ c0 + (fxs + fxsnew) *$ c1);
   done;
   sol
 
@@ -49,13 +48,13 @@ let contact2_damped ~a ~f y0 (t0, t1) dt =
     let t = t0 +. dt *. (float_of_int idx) in
     let at = a t in
     let fxs = f xs t in
-    let c0 = 1.0 -. 0.5*.dt*.at in
-    let c0plus = 1.0 +. 0.5*.dt*.at in
+    let c0m = 1.0 -. 0.5*.dt*.at in
+    let c0p = 1.0 +. 0.5*.dt*.at in
     let c1 = 0.5*.dt in
-    let xsnew = Owl.Mat.(xs + mul_scalar ps (dt*.c0) + mul_scalar fxs (dt*.c1)) in
+    let xsnew = Owl.Mat.(xs + ps *$ (dt*.c0m) + fxs *$ (dt*.c1)) in
     let fxsnew = f xsnew t in
     sol.${[[idx]; [0; elts/2-1]]}<- xsnew;
-    sol.${[[idx]; [elts/2; elts-1]]}<- Owl.Mat.(mul_scalar ps (c0/.c0plus) + mul_scalar (fxs + fxsnew) (c1/.c0plus));
+    sol.${[[idx]; [elts/2; elts-1]]}<- Owl.Mat.(ps *$ (c0m/.c0p) + (fxs + fxsnew) *$ (c1/.c0p));
   done;
   sol
 
