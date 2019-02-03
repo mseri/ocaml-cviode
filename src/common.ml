@@ -22,6 +22,8 @@ let integrate ~step y0 (t0, t1) dt =
   let steps = steps t0 t1 dt in
   let _, elts = Owl.Mat.shape y0 in
   let sol = Owl.Mat.empty steps elts in
+  (* These are all fixed step algorithms, saving the time array is
+     quite overkill as tspan will just be a deterministic linspace... *)
   let tspan = Owl.Arr.empty [|steps|] in
   sol.${[[0]]}<- y0;
   tspan.%{[|0|]}<-t0;
