@@ -19,39 +19,42 @@ let steps t0 t1 dt =
 let (.${}) = Owl.Mat.(.${})
 let (.${}<-) = Owl.Mat.(.${}<-)
 
-let contact1_damped ~a ~f y0 (t0, t1) dt =
-  check a f y0;
+let integrate ~step y0 (t0, t1) dt =
   let steps = steps t0 t1 dt in
   let _, elts = Owl.Mat.shape y0 in
   let sol = Owl.Mat.empty steps elts in
+  let t = ref t0 in
   sol.${[[0]]}<- y0;
   for idx = 1 to steps-1 do
     let xi, pi = slices (idx-1) elts in
     let xi', pi' = slices idx elts in
     let xs, ps = sol.${xi}, sol.${pi} in
-    let t = t0 +. dt*.(float_of_int idx) in
+    let xs', ps', t' = step xs ps !t in
+    sol.${xi'}<- xs';
+    sol.${pi'}<- ps';
+    t := t';
+  done;
+  sol
+
+let contact1_damped ~a ~f y0 tspan dt =
+  check a f y0;
+  let step xs ps t0 =
+    let t = t0 +. dt in
     let c0 = 1.0 -. dt*.(a t) in
     let c1 = 0.5 *. dt in
     let fxs = f xs t in
     let xs' = Owl.Mat.(xs + ps *$ (dt*.c0) + fxs *$ (dt*.c1)) in
     let fxs' = f xs' t in
-    sol.${xi'}<- xs';
-    sol.${pi'}<- Owl.Mat.(ps *$ c0 + (fxs + fxs') *$ c1);
-  done;
-  sol
+    let ps' = Owl.Mat.(ps *$ c0 + (fxs + fxs') *$ c1) in
+    xs', ps', t
+  in
+  integrate ~step y0 tspan dt
 
 
-let contact2_damped ~a ~f y0 (t0, t1) dt =
+let contact2_damped ~a ~f y0 tspan dt =
   check a f y0;
-  let steps = steps t0 t1 dt in
-  let _, elts = Owl.Mat.shape y0 in
-  let sol = Owl.Mat.empty steps elts in
-  sol.${[[0]]}<- y0;
-  for idx = 1 to steps-1 do
-    let xi, pi = slices (idx-1) elts in
-    let xi', pi' = slices idx elts in
-    let xs, ps = sol.${xi}, sol.${pi} in
-    let t = t0 +. dt *. (float_of_int idx) in
+  let step xs ps t0 =
+    let t = t0 +. dt in
     let at = a t in
     let fxs = f xs t in
     let c0m = 1.0 -. 0.5*.dt*.at in
@@ -59,9 +62,9 @@ let contact2_damped ~a ~f y0 (t0, t1) dt =
     let c1 = 0.5*.dt in
     let xs' = Owl.Mat.(xs + ps *$ (dt*.c0m) + fxs *$ (dt*.c1)) in
     let fxs' = f xs' t in
-    sol.${xi'}<- xs';
-    sol.${pi'}<- Owl.Mat.(ps *$ (c0m/.c0p) + (fxs + fxs') *$ (c1/.c0p));
-  done;
-  sol
+    let ps' = Owl.Mat.(ps *$ (c0m/.c0p) + (fxs + fxs') *$ (c1/.c0p)) in
+    xs', ps', t
+  in
+  integrate ~step y0 tspan dt
 
 (* TODO: Add integrator for generic g_2(z) as by description *)
