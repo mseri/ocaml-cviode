@@ -25,15 +25,13 @@ let plot_sol fname t sol1 sol2 =
 let () =
   let y0 = Owl.Mat.of_array [|-0.25; 0.75|] 1 2 in
   let tspan = (0.0, 15.0) in
-  let t = Owl.Arr.linspace 0.0 15.0 (int_of_float @@ Float.floor (15.0/.dt)) in
-  let sol1 = Cviode.contact1_damped ~a ~f:damped_noforcing y0 tspan dt in
-  let sol2 = Cviode.contact2_damped ~a ~f:damped_noforcing y0 tspan dt in
+  let t, sol1 = Cviode.contact1_damped ~a ~f:damped_noforcing y0 tspan dt in
+  let _, sol2 = Cviode.contact2_damped ~a ~f:damped_noforcing y0 tspan dt in
   plot_sol "damped.png" t sol1 sol2;
 
   let y0 = Owl.Mat.of_array [|-0.284; -0.027|] 1 2 in
   let tspan = (0.0, 50.0) in
-  let t = Owl.Arr.linspace 0.0 50.0 (int_of_float @@ Float.floor (50.0/.dt)) in
   let damped_forcing = damped_forcing 0.3 (Float.pi/.3.0) in
-  let sol1 = Cviode.contact2_damped ~a ~f:damped_forcing y0 tspan dt in
-  let sol2 = Cviode.contact2_damped ~a ~f:damped_forcing y0 tspan dt in
+  let t, sol1 = Cviode.contact2_damped ~a ~f:damped_forcing y0 tspan dt in
+  let _, sol2 = Cviode.contact2_damped ~a ~f:damped_forcing y0 tspan dt in
   plot_sol "forced.png" t sol1 sol2
