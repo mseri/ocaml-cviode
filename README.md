@@ -7,7 +7,7 @@ $$
 L(x, \dot{x}, z, t) = \frac12|\dot{x}|^2 + g_1(x)g_2(z) + h(z) + f(t)x
 $$
 ```
-For further information refer to _Vermeeren, Bravetti, Seri: Contact Variational Integrators (2019)_.
+For further information refer to [_Vermeeren, Bravetti, Seri: Contact Variational Integrators (2019)_](https://arxiv.org/abs/1902.00436).
 
 Running the integrators on the damped oscillator with and without forcing (see [example/damped.ml](example/damped.ml)) produces the following output:
 
