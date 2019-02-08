@@ -1,8 +1,10 @@
-let damped_noforcing xs _ = Owl.Mat.(xs *$ (-1.0))
+module M = Owl.Dense.Matrix.D
 
-let damped_forcing beta omega xs t = 
-  Owl.Mat.(
-    (damped_noforcing xs 0.0) +$
+let damped_noforcing ((xs, _):M.mat * M.mat) _ = M.(xs *$ (-1.0))
+
+let damped_forcing beta omega ((xs, ps):M.mat * M.mat) t= 
+  M.(
+    (damped_noforcing (xs, ps) 0.0) +$
     (beta *. Owl.Maths.sin(omega *. t))
   )
 
@@ -23,15 +25,18 @@ let plot_sol fname t sol1 sol2 =
   output h
 
 let () =
-  let y0 = Owl.Mat.of_array [|-0.25; 0.75|] 1 2 in
-  let tspan = (0.0, 15.0) in
-  let t, sol1 = Cviode.contact1_damped ~a ~f:damped_noforcing y0 tspan dt in
-  let _, sol2 = Cviode.contact2_damped ~a ~f:damped_noforcing y0 tspan dt in
-  plot_sol "damped.png" t sol1 sol2;
+  let open Owl_ode.Types in
+  let y0 = M.of_array [|-0.25|] 1 1, M.of_array [|0.75|] 1 1 in
+  let tspec = T2 {tspan=(0.0, 15.0); dt} in
+  let module Contact1 = Cviode.D.Contact1_damped(struct let a=a end) in
+  let module Contact2 = Cviode.D.Contact2_damped(struct let a=a end) in
+  let t, sol1, _ = Owl_ode.Ode.odeint (module Contact1) damped_noforcing y0 tspec () in
+  let _, sol2, _ = Owl_ode.Ode.odeint (module Contact2) damped_noforcing y0 tspec () in
+  plot_sol "damped.png" (M.of_array t 1 (Array.length t)) sol1 sol2;
 
-  let y0 = Owl.Mat.of_array [|-0.284; -0.027|] 1 2 in
-  let tspan = (0.0, 50.0) in
+  let y0 = M.of_array [|-0.284|] 1 1, M.of_array [|-0.027|] 1 1 in
+  let tspec = T2 {tspan=(0.0, 50.0); dt} in
   let damped_forcing = damped_forcing 0.3 (Float.pi/.3.0) in
-  let t, sol1 = Cviode.contact2_damped ~a ~f:damped_forcing y0 tspan dt in
-  let _, sol2 = Cviode.contact2_damped ~a ~f:damped_forcing y0 tspan dt in
-  plot_sol "forced.png" t sol1 sol2
+  let t, sol1, _ = Owl_ode.Ode.odeint (module Contact1) damped_forcing y0 tspec () in
+  let _, sol2, _ = Owl_ode.Ode.odeint (module Contact2) damped_forcing y0 tspec () in
+  plot_sol "forced.png" (M.of_array t 1 (Array.length t)) sol1 sol2

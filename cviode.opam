@@ -15,9 +15,9 @@ build: [
 ]
 depends: [
   "ocaml" {>= "4.02"}
-  "base-bigarray"
   "dune" {build}
-  "base-bytes" {build}
+  "owl"
+  "owl-ode"
 ]
 synopsis: "Contact variational integrators - native ocaml version"
 description: """
