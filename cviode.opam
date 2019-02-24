@@ -18,6 +18,7 @@ depends: [
   "dune" {build}
   "owl"
   "owl-ode"
+  "owl-plplot" {with-test}
 ]
 synopsis: "Contact variational integrators - native ocaml version"
 description: """

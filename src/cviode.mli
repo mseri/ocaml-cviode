@@ -1,26 +1,29 @@
-open Owl_ode.Common
 open Owl_ode.Types
 
-type 'a f_t = (float, 'a) M.t -> (float, 'a) M.t -> float -> (float, 'a) M.t
+module Make: functor
+  (M: Owl_types_ndarray_algodiff.Sig with type elt = float) 
+  -> sig 
 
-val contact1_damped_s :
-  a:(float -> float) ->
-  f:'a f_t ->
-  dt:float -> 
-  (float, 'a) M.t ->
-  (float, 'a) M.t ->
-  float ->
-  (float, 'a) M.t * (float, 'a) M.t * float
+    type f_t = M.arr -> M.arr -> float -> M.arr
 
-val contact2_damped_s :
-  a:(float -> float) ->
-  f:'a f_t ->
-  dt:float -> 
-  (float, 'a) M.t ->
-  (float, 'a) M.t ->
-  float ->
-  (float, 'a) M.t * (float, 'a) M.t * float
+    val contact1_damped_s :
+      a:(float -> float) ->
+      f:f_t ->
+      dt:float -> 
+      M.arr ->
+      M.arr ->
+      float ->
+      M.arr * M.arr * float
 
+    val contact2_damped_s :
+      a:(float -> float) ->
+      f:f_t ->
+      dt:float -> 
+      M.arr ->
+      M.arr ->
+      float ->
+      M.arr * M.arr * float
+  end
 
 module S: sig
   type mat = Owl_dense_matrix_s.mat
@@ -29,13 +32,13 @@ module S: sig
     functor (A : sig val a : float -> float end) -> 
       SolverT with type s = mat * mat
                and type t = mat
-               and type output = float array * mat * mat
+               and type output = mat * mat * mat
 
   module Contact2_damped :
     functor (A : sig val a : float -> float end) ->
       SolverT with type s = mat * mat
                and type t = mat
-               and type output = float array * mat * mat
+               and type output = mat * mat * mat
 
 end
 
@@ -46,12 +49,12 @@ module D: sig
     functor (A : sig val a : float -> float end) -> 
       SolverT with type s = mat * mat
                and type t = mat
-               and type output = float array * mat * mat
+               and type output = mat * mat * mat
 
   module Contact2_damped :
     functor (A : sig val a : float -> float end) ->
       SolverT with type s = mat * mat
                and type t = mat
-               and type output = float array * mat * mat
+               and type output = mat * mat * mat
 
 end
