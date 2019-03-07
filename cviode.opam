@@ -3,8 +3,8 @@ maintainer: "Marcello Seri <m.seri@rug.nl>"
 authors: [ "Marcello Seri <m.seri@rug.nl>" ]
 license: "MIT"
 homepage: "https://github.com/mseri/ocaml-cviode"
-dev-repo: "git+https://github.com/ocaml/ocaml-cviode.git"
-bug-reports: "https://github.com/ocaml/ocaml-cviode/issues"
+dev-repo: "git+https://github.com/mseri/ocaml-cviode.git"
+bug-reports: "https://github.com/mseri/ocaml-cviode/issues"
 doc: "https://mseri.github.io/ocaml-cviode/"
 tags: [ "ODE" "scientific-computing"  ]
 build: [
