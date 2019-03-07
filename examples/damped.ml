@@ -36,7 +36,7 @@ let () =
 
   let y0 = M.of_array [|-0.284|] 1 1, M.of_array [|-0.027|] 1 1 in
   let tspec = T2 {tspan=(0.0, 50.0); dt} in
-  let damped_forcing = damped_forcing 0.3 (Float.pi/.3.0) in
+  let damped_forcing = damped_forcing 0.3 (Stdcompat.Float.pi/.3.0) in
   let t, sol1, _ = Owl_ode.Ode.odeint (module Contact1) damped_forcing y0 tspec () in
   let _, sol2, _ = Owl_ode.Ode.odeint (module Contact2) damped_forcing y0 tspec () in
   plot_sol "forced.png" t sol1 sol2

@@ -1,6 +1,6 @@
 (executable
  (name damped)
- (libraries cviode owl owl-plplot)
+ (libraries cviode owl owl-plplot stdcompat)
 )
 
 (alias
