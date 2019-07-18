@@ -4,25 +4,23 @@ module Make: functor
   (M: Owl_types_ndarray_algodiff.Sig with type elt = float) 
   -> sig 
 
-    type f_t = M.arr -> M.arr -> float -> M.arr
+    type f_t = M.arr * M.arr -> float -> M.arr
 
     val contact1_damped_s :
       a:(float -> float) ->
-      f:f_t ->
+      f_t ->
       dt:float -> 
-      M.arr ->
-      M.arr ->
+      M.arr * M.arr ->
       float ->
-      M.arr * M.arr * float
+      (M.arr * M.arr) * float
 
     val contact2_damped_s :
       a:(float -> float) ->
-      f:f_t ->
+      f_t ->
       dt:float -> 
-      M.arr ->
-      M.arr ->
+      M.arr * M.arr ->
       float ->
-      M.arr * M.arr * float
+      (M.arr * M.arr) * float
   end
 
 module S: sig
@@ -30,15 +28,17 @@ module S: sig
 
   module Contact1_damped :
     functor (A : sig val a : float -> float end) -> 
-      SolverT with type s = mat * mat
-               and type t = mat
-               and type output = mat * mat * mat
+      Solver with type state = mat * mat
+              and type f = mat * mat -> float -> mat
+              and type step_output = (mat * mat) * float
+              and type solve_output = mat * mat *mat
 
   module Contact2_damped :
     functor (A : sig val a : float -> float end) ->
-      SolverT with type s = mat * mat
-               and type t = mat
-               and type output = mat * mat * mat
+      Solver  with type state = mat * mat
+              and type f = mat * mat -> float -> mat
+              and type step_output = (mat * mat) * float
+              and type solve_output = mat * mat *mat
 
 end
 
@@ -47,14 +47,16 @@ module D: sig
 
   module Contact1_damped :
     functor (A : sig val a : float -> float end) -> 
-      SolverT with type s = mat * mat
-               and type t = mat
-               and type output = mat * mat * mat
+      Solver  with type state = mat * mat
+              and type f = mat * mat -> float -> mat
+              and type step_output = (mat * mat) * float
+              and type solve_output = mat * mat *mat
 
   module Contact2_damped :
     functor (A : sig val a : float -> float end) ->
-      SolverT with type s = mat * mat
-               and type t = mat
-               and type output = mat * mat * mat
+      Solver  with type state = mat * mat
+              and type f = mat * mat -> float -> mat
+              and type step_output = (mat * mat) * float
+              and type solve_output = mat * mat *mat
 
 end

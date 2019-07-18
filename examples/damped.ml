@@ -1,6 +1,6 @@
 module M = Owl.Dense.Matrix.D
 
-let damped_noforcing ((xs, _):M.mat * M.mat) _ = M.(xs *$ (-1.0))
+let damped_noforcing ((xs, _):M.mat * M.mat) (_:float) :M.mat = M.(xs *$ (-1.0))
 
 let damped_forcing beta omega ((xs, ps):M.mat * M.mat) t= 
   M.(
