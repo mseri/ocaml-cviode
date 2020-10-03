@@ -1,0 +1,25 @@
+name: CVIODE CI
+on:
+  - push
+  - pull_request
+jobs:
+  run:
+    name: Tests
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      matrix:
+        # windows-latest async does not support it for now
+        operating-system: [macos-latest, ubuntu-latest]
+        ocaml-version: [ '4.11.1', '4.10.1', '4.09.1', '4.08.1' ]
+    steps:
+    - uses: actions/checkout@master
+    - name: OCaml GitHub Action
+      uses: avsm/setup-ocaml@v1.0
+      with:
+        ocaml-version: ${{ matrix.ocaml-version }}
+    - name: Pin Packages
+      run: opam pin add -n .
+    - name: Dependencies
+      run: opam install cviode --deps-only
+    - name: Build and test independently
+      run: opam install -t cviode
