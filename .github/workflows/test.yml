@@ -1,4 +1,4 @@
-name: CVIODE CI
+name: CVI Ode CI
 on:
   - push
   - pull_request
@@ -8,18 +8,15 @@ jobs:
     runs-on: ${{ matrix.operating-system }}
     strategy:
       matrix:
-        # windows-latest async does not support it for now
+        # windows-latest not supported for now
         operating-system: [macos-latest, ubuntu-latest]
-        ocaml-version: [ '4.11.1', '4.10.1', '4.09.1', '4.08.1' ]
+        ocaml-version: [ '4.11.1', '4.10.1' ]
     steps:
     - uses: actions/checkout@master
-    - name: OCaml GitHub Action
-      uses: avsm/setup-ocaml@v1.0
+    - uses: avsm/setup-ocaml@v1.0
       with:
         ocaml-version: ${{ matrix.ocaml-version }}
-    - name: Pin Packages
-      run: opam pin add -n .
-    - name: Dependencies
-      run: opam install cviode --deps-only
-    - name: Build and test independently
-      run: opam install -t cviode
+    - run: opam pin add cviode.dev . --no-action
+    - run: opam depext cviode --yes --with-test
+    - run: opam install cviode --yes --deps-only
+    - run: opam install -t cviode
