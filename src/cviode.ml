@@ -51,7 +51,7 @@ end
 module S = struct
   type mat = Owl_dense_matrix_s.mat
 
-  include Make (Owl_dense_ndarray.S)
+  include Make (Owl_algodiff_primal_ops.S)
 
   module Contact1_damped (A : sig
     val a : float -> float
@@ -83,7 +83,7 @@ end
 module D = struct
   type mat = Owl_dense_matrix_d.mat
 
-  include Make (Owl_dense_ndarray.D)
+  include Make (Owl_algodiff_primal_ops.D)
 
   module Contact1_damped (A : sig
     val a : float -> float
