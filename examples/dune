@@ -2,7 +2,7 @@
  (name damped)
  (libraries cviode owl owl-plplot stdcompat))
 
-(alias
- (name runtest)
+(rule
+ (alias runtest)
  (action
   (run ./damped.exe)))
