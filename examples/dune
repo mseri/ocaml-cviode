@@ -6,3 +6,8 @@
  (alias runtest)
  (action
   (run ./damped.exe)))
+
+(env
+ (_
+  (env-vars
+   (QT_QPA_PLATFORM offscreen))))
