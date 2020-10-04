@@ -9,7 +9,8 @@ jobs:
     strategy:
       matrix:
         # windows-latest not supported for now
-        operating-system: [macos-latest, ubuntu-latest]
+        # temporarily disable ubuntu-latest
+        operating-system: [macos-latest]
         ocaml-version: [ '4.11.1', '4.10.1' ]
     steps:
     - uses: actions/checkout@master
